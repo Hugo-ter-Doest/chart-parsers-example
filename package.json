@@ -1,0 +1,37 @@
+{
+  "name": "chart-parsers-example",
+  "version": "0.0.1",
+  "description": "Example web application for taggers and chart parsers.",
+  "main": "app.js",
+  "scripts": {
+    "test": "jasmine-node ./spec",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hugo-ter-Doest/chart-parsers-example.git"
+  },
+  "keywords": [
+    "NLP",
+    "natural language processing",
+    "tagging",
+    "parsing",
+    "tagger",
+    "parser",
+    "chart parser",
+    "language technology",
+    "computer linguistics"
+  ],
+  "author": "Hugo W.L. ter Doest",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/Hugo-ter-Doest/chart-parsers-example/issues"
+  },
+  "homepage": "https://github.com/Hugo-ter-Doest/chart-parsers-example",
+  "dependencies" : {
+    "natural" : "*",
+    "log4js" : "*",
+    "simple-pos-tagger": "*",
+    "chart-parsers": "*"
+  }
+}
