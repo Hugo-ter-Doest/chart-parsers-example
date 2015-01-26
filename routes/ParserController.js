@@ -20,11 +20,8 @@ var formidable = require('formidable');
 var fs = require('fs');
 
 var chart_parsers = require('chart-parsers');
-var CYK_ChartParser = chart_parsers.CYKParser;
-var EarleyChartParser = chart_parsers.EarleyParser;
-var LeftCornerChartParser = chart_parsers.LeftCornerParser;
-var HeadCornerChartParser = chart_parsers.HeadCornerParser;
 var GrammarParser = chart_parsers.GrammarParser;
+var Parser = chart_parsers.Parser;
 
 var pos = require('pos');
 var grammar;
@@ -64,18 +61,18 @@ exports.parse_sentence = function(req, res) {
 
   var parser;
   if (req.param("op_CYK")) {
-    parser = new CYK_ChartParser(grammar);
+    parser = new Parser('CYK', grammar);
   }
   else {
     if (req.param("op_Earley")) {
-      parser = new EarleyChartParser(grammar);
+      parser = new Parser('Earley', grammar);
     }
     else {
       if (req.param("op_HeadCorner")) {
-        parser = new HeadCornerChartParser(grammar);
+        parser = new Parser('HeadCorner', grammar);
       }
       else {
-        parser = new LeftCornerChartParser(grammar);
+        parser = new Parser('LeftCorner', grammar);
       }
     }
   }
