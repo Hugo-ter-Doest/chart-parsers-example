@@ -19,12 +19,10 @@
 var formidable = require('formidable');
 var fs = require('fs');
 
-var chart_parsers = require('chart-parsers');
-var GrammarParser = chart_parsers.GrammarParser;
-var Parser = chart_parsers.Parser;
+var ParserFactoryClass = require('chart-parsers');
+var parserFactory = new ParserFactoryClass();
 
 var pos = require('pos');
-var grammar;
 
 // Page for loading a grammar
 exports.choose_grammar_file = function(req, res) {
@@ -36,11 +34,11 @@ exports.submit_grammar = function(req, res) {
   var form = new formidable.IncomingForm();
 
   form.parse(req, function(err, fields, files) {
-    fs.readFile(files.grammar_file.path, 'utf8', function (error, grammar_text) {
+    fs.readFile(files.grammar_file.path, 'utf8', function (error, text) {
       if (error) {
         console.log(error);
       }
-      grammar = GrammarParser.parse(grammar_text);
+      parserFactory.setGrammar(text);
       res.redirect('/input_sentence');
     });
   });
@@ -61,18 +59,18 @@ exports.parse_sentence = function(req, res) {
 
   var parser;
   if (req.param("op_CYK")) {
-    parser = new Parser('CYK', grammar);
+    parser = parserFactory.createParser({'type': 'CYK'});
   }
   else {
     if (req.param("op_Earley")) {
-      parser = new Parser('Earley', grammar);
+      parser = parserFactory.createParser({'type': 'Earley'});
     }
     else {
       if (req.param("op_HeadCorner")) {
-        parser = new Parser('HeadCorner', grammar);
+        parser = parserFactory.createParser({'type': 'HeadCorner'});
       }
       else {
-        parser = new Parser('LeftCorner', grammar);
+        parser = parserFactory.createParser({'type': 'LeftCorner'});
       }
     }
   }
