@@ -38,7 +38,9 @@ exports.submit_grammar = function(req, res) {
       if (error) {
         console.log(error);
       }
+  
       parserFactory.setGrammar(text);
+  
       res.redirect('/input_sentence');
     });
   });
@@ -51,39 +53,26 @@ exports.input_sentence = function(req, res) {
 
 // Parse a sentence
 exports.parse_sentence = function(req, res) {
-  var sentence = req.param('input_sentence');
+  var sentence = req.body.input_sentence;
   var words = new pos.Lexer().lex(sentence);
   var taggedWords = new pos.Tagger().tag(words);
   var N = taggedWords.length;
-  console.log('Tagged sentence: ' + taggedWords);
 
-  var parser;
-  if (req.param("op_CYK")) {
-    parser = parserFactory.createParser({'type': 'CYK'});
-  }
-  else {
-    if (req.param("op_Earley")) {
-      parser = parserFactory.createParser({'type': 'Earley'});
-    }
-    else {
-      if (req.param("op_HeadCorner")) {
-        parser = parserFactory.createParser({'type': 'HeadCorner'});
-      }
-      else {
-        parser = parserFactory.createParser({'type': 'LeftCorner'});
-      }
-    }
+  var parser = parserFactory.createParser({'type': req.body.parsingAlgorithm});
+
+  function listener(event_name, item) {
+    //console.log(event_name + ': ' + item.id);
   }
 
   var start = new Date().getTime();
-  var chart = parser.parse(taggedWords);
+  var chart = parser.parse(taggedWords, listener);
   var end = new Date().getTime();
   
-  console.log(chart);
-  
-  var full_parse_items = chart.full_parse_items(grammar.get_start_symbol());
-  
-  res.render('parse_result', {type_of_parser: typeof parser,
+  var full_parse_items = chart.full_parse_items(parser.grammar.get_start_symbol(), 
+    ((req.body.parsingAlgorithm === 'HeadCorner') || 
+     (req.body.parsingAlgorithm === 'CYK')) ? 'cyk_item' : 'earleyitem');
+
+  res.render('parse_result', {type_of_parser: req.body.parsingAlgorithm,
                               N: N,
                               tagged_sentence: taggedWords,
                               chart: chart,

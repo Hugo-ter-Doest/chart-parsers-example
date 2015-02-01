@@ -8,10 +8,10 @@ block content
       label Input sentence:
       input(type="text", name="input_sentence", width="300px")
     div
-      input(type='submit', name='op_CYK', value='CYK')
+      select(id="parsingAlgorithm", name="parsingAlgorithm")
+        option(value="CYK") CYK
+        option(value="Earley") Earley
+        option(value="LeftCorner") Left-Corner
+        option(value="HeadCorner") Head-Corner
     div
-      input(type='submit', name='op_Earley', value='Earley')
-    div
-      input(type='submit', name='op_LeftCorner', value='Left-Corner')
-    div
-      input(type='submit', name='op_HeadCorner', value='Head-Corner')
+      input(type='submit', name='Parse', value='Parse')
