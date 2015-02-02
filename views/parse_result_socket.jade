@@ -1,0 +1,58 @@
+extends layout
+block content
+  script(language="javascript" type="text/javascript" src="/socket.io/socket.io.js")
+  script.
+    var socket = io.connect('http://localhost:3000');
+    socket.on('itemAddedToChart', function (item) {
+        var chart = document.getElementById("chart");
+        var text = document.createTextNode(item.id + '\n');
+        if ((item.data.from + 4 < chart.rows.length) && 
+            (item.data.to < chart.rows[item.data.from+4].cells.length)) {
+            var children = chart.rows[item.data.from+4].cells[item.data.to].childNodes;
+            if (children.length > 0) {
+                var number = parseInt(children[0].nodeValue);
+                if (number !== NaN) {
+                    number++;
+                    var tn = document.createTextNode(number);
+                    chart.rows[item.data.from+4].cells[item.data.to].replaceChild(tn, children[0]);
+                }
+                else {
+                    var tn = document.createTextNode("1");
+                    chart.rows[item.data.from+4].cells[item.data.to].replaceChild(tn, children[0]);
+                }
+            }
+            else {
+                var tn = document.createTextNode(1);
+                chart.rows[item.data.from+4].cells[item.data.to].appendChild(tn);
+            }
+            var prev_color = chart.rows[item.data.from+4].cells[item.data.to].style.backgroundColor;
+            chart.rows[item.data.from+4].cells[item.data.to].style.backgroundColor = "red";
+        }
+    });
+    socket.on('itemAddedToAgenda', function (data) {
+        //console.log(data);
+    });
+  div
+    table(border="1px", id="chart")
+      tr
+        td(width="50px", height="50px", align="center")=""
+        - for (var i = 0; i < N; i++) {
+            td(width="50px", height="50px", align="center")=tagged_sentence[i][0]
+        - }
+      tr
+        td(width="50px", height="50px", align="center")=""
+        - for (var i = 0; i < N; i++) {
+            td(width="50px", height="50px", align="center")=tagged_sentence[i][1]
+        - }
+      tr
+        - for (var i = 0; i <= N; i++) {
+            td(width="130px", height="50px", align="center")=i
+        - }
+      tr
+        - for (var i = 0; i <= N; i++) {
+          tr
+            td(width="30px", height="50px", align="center")=i
+            - for (var j = 1; j <= N; j++) {
+                td(width="50px", height="50px", align="center")=""
+            - }
+        - }      
